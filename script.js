@@ -11,11 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('fireworksCanvas');
     const introOverlay = document.getElementById('introOverlay');
     const cardContainer = document.getElementById('cardContainer');
+    const cardFront = document.getElementById('cardFront');
+    const nextButton = document.getElementById('nextButton');
     const ctx = canvas.getContext('2d');
     
     let currentSlide = 0;
     const totalSlides = document.querySelectorAll('.gift').length;
     let isCardOpen = false;
+    const openedGifts = new Set(); // Rastrear regalos abiertos
 
     // Ajustar el tamaño del canvas
     function resizeCanvas() {
@@ -79,14 +82,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Iniciar fuegos artificiales
             launchFireworks();
             
-            //Iniciar audio antes de tiempo
-            audio.currentTime = 2
-
             // Reproducir audio
             audio.play().catch(error => {
                 console.log('No se pudo reproducir el audio:', error);
             });
-
+            
             // Iniciar fundido en el segundo 33 (35000ms - 2000ms)
             setTimeout(() => {
                 const fadeDuration = 2000; // 2 segundos de fundido
@@ -107,15 +107,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500); // Esperar a que termine la animación (0.5s)
     });
 
-    // Abrir/cerrar tarjeta
-    card.addEventListener('click', function() {
+    // Abrir/cerrar tarjeta, evitando clics en elementos interactivos
+    card.addEventListener('click', function(event) {
+        // Evitar togglear si el clic ocurre en regalos, puntos, o botón
+        if (
+            event.target.closest('.gift-image') ||
+            event.target.closest('.slider-dot') ||
+            event.target.closest('.next-button')
+        ) {
+            return;
+        }
+        
         card.classList.toggle('is-open');
         isCardOpen = !isCardOpen;
         if (isCardOpen) {
             launchConfetti();
         }
     });
-    
+
+    // Manejar clic en el botón de flecha
+    nextButton.addEventListener('click', function() {
+        card.classList.remove('is-open');
+        isCardOpen = false;
+        
+        // Actualizar contenido de la parte frontal
+        cardFront.innerHTML = `
+            <p class="glowing-text final-message">Pásala muy bonito en tu día especial :D</p>
+        `;
+        
+        // Deshabilitar reapertura (opcional)
+        card.style.cursor = 'default';
+        card.removeEventListener('click', arguments.callee);
+    });
+
     // Deslizador de regalos
     function goToSlide(index) {
         if (index < 0 || index >= totalSlides) return;
@@ -142,6 +166,14 @@ document.addEventListener('DOMContentLoaded', function() {
         gift.addEventListener('click', function() {
             const giftNumber = this.getAttribute('data-gift');
             showGiftMessage(giftNumber);
+            
+            // Agregar regalo al conjunto de abiertos
+            openedGifts.add(giftNumber);
+            
+            // Mostrar botón si se han abierto los tres regalos
+            if (openedGifts.size === 3) {
+                nextButton.classList.remove('hidden');
+            }
         });
     });
     

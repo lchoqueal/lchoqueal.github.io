@@ -92,6 +92,7 @@ body {
     overflow: hidden;
     box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.1);
     z-index: 1;
+    position: relative;
 }
 
 .glowing-text {
@@ -240,6 +241,32 @@ body {
     background-color: #ff758c;
 }
 
+.next-button {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: #ff758c;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.next-button:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+}
+
+.next-button:hover {
+    transform: scale(1.1);
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -297,4 +324,4 @@ body {
     background: linear-gradient(to right, #d64d6b, #b53a57);
     z-index: 3;
     border-radius: 5px 0 0 5px;
-}
+}   
