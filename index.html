@@ -7,9 +7,15 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <canvas id="fireworksCanvas" class="fireworks-canvas"></canvas>
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-message">
+            Hola xd, 3 años de ingeniería de algo tiene que servir jsjsj, y bueno sin nada mas que decir, presiona para la magia 🫣
+        </div>
+    </div>
+
+    <canvas id="fireworksCanvas" class="fireworks-canvas hidden"></canvas>
     
-    <div class="card-container">
+    <div class="card-container hidden" id="cardContainer">
         <div class="card" id="birthdayCard">
             <div class="card-spine"></div>
             <div class="card-face card-front">
