@@ -29,17 +29,12 @@ document.addEventListener('DOMContentLoaded', function() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Fuegos artificiales más realistas
-    function launchFireworks(duration) {
-        console.log('Iniciando fuegos artificiales por', duration, 'ms'); // Depuración
+    // Fuegos artificiales (versión original, ajustada a 30 segundos)
+    function launchFireworks() {
+        console.log('Iniciando fuegos artificiales'); // Depuración
+        const duration = 30 * 1000; // 30 segundos
         const animationEnd = Date.now() + duration;
-        const defaults = {
-            startVelocity: 30,
-            spread: 120,
-            ticks: 60,
-            zIndex: 0,
-            colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff']
-        };
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
 
         function randomInRange(min, max) {
             return Math.random() * (max - min) + min;
@@ -53,23 +48,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 return clearInterval(interval);
             }
 
-            const particleCount = randomInRange(30, 60);
-            // Lanzar desde diferentes posiciones
+            const particleCount = 50 * (timeLeft / duration);
             confetti(Object.assign({}, defaults, {
                 particleCount,
-                origin: { x: randomInRange(0.1, 0.3), y: randomInRange(0.6, 0.8) },
-                startVelocity: randomInRange(20, 40),
-                spread: randomInRange(90, 150),
-                scalar: randomInRange(0.5, 1.5)
+                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
             }));
             confetti(Object.assign({}, defaults, {
                 particleCount,
-                origin: { x: randomInRange(0.7, 0.9), y: randomInRange(0.6, 0.8) },
-                startVelocity: randomInRange(20, 40),
-                spread: randomInRange(90, 150),
-                scalar: randomInRange(0.5, 1.5)
+                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
             }));
-        }, 200); // Lanzar cada 200ms
+        }, 250);
     }
 
     // Confeti al abrir la tarjeta
@@ -84,11 +72,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Manejar clic en el overlay inicial
     introOverlay.addEventListener('click', function() {
+        const startTime = Date.now(); // Registrar tiempo del clic
         // Animar el mensaje hacia arriba
         const introMessage = introOverlay.querySelector('.intro-message');
         introMessage.classList.add('exit');
         
-        // Ocultar overlay y mostrar tarjeta después de la animación
+        // Ocultar overlay y mostrar tarjeta después de la animación (0.5s)
         setTimeout(() => {
             introOverlay.classList.add('hidden');
             cardContainer.classList.remove('hidden');
@@ -97,42 +86,43 @@ document.addEventListener('DOMContentLoaded', function() {
             // Deshabilitar interacción con la tarjeta inicialmente
             card.style.pointerEvents = 'none';
             
-            // Reproducir primera canción después de 3 segundos
+            // Iniciar fuegos artificiales
+            launchFireworks();
+            
+            // Iniciar primera canción en el segundo 3 (3,000ms desde el clic)
             setTimeout(() => {
                 birthdayAudio.play().catch(error => {
                     console.log('No se pudo reproducir la primera canción:', error);
                 });
-                
-                // Iniciar fuegos artificiales por 30 segundos
-                launchFireworks(30000); // 30,000ms
-                
-                // Iniciar fade-out en el segundo 28 (28,000ms)
-                setTimeout(() => {
-                    console.log('Iniciando fade-out'); // Depuración
-                    const fadeDuration = 2000; // 2 segundos
-                    const fadeInterval = 50; // Actualizar cada 50ms
-                    const volumeStep = birthdayAudio.volume / (fadeDuration / fadeInterval);
+                console.log('Primera canción iniciada'); // Depuración
+            }, 3000 - (Date.now() - startTime)); // Ajustar al segundo 3 exacto
+            
+            // Iniciar fade-out en el segundo 28 (28,000ms desde el clic)
+            setTimeout(() => {
+                console.log('Iniciando fade-out'); // Depuración
+                const fadeDuration = 2000; // 2 segundos
+                const fadeInterval = 50; // Actualizar cada 50ms
+                const volumeStep = birthdayAudio.volume / (fadeDuration / fadeInterval);
 
-                    const fadeOut = setInterval(() => {
-                        if (birthdayAudio.volume > 0) {
-                            birthdayAudio.volume = Math.max(0, birthdayAudio.volume - volumeStep);
-                        } else {
-                            birthdayAudio.pause();
-                            birthdayAudio.currentTime = 0; // Reiniciar
-                            birthdayAudio.volume = 1; // Restaurar volumen
-                            clearInterval(fadeOut);
-                            console.log('Fade-out terminado, iniciando segunda canción'); // Depuración
-                            // Iniciar segunda canción
-                            secondAudio.play().catch(error => {
-                                console.log('No se pudo reproducir la segunda canción:', error);
-                            });
-                            // Habilitar tarjeta
-                            card.style.pointerEvents = 'auto';
-                            console.log('Tarjeta habilitada'); // Depuración
-                        }
-                    }, fadeInterval);
-                }, 28000); // Segundo 28
-            }, 3000); // Segundo 3
+                const fadeOut = setInterval(() => {
+                    if (birthdayAudio.volume > 0) {
+                        birthdayAudio.volume = Math.max(0, birthdayAudio.volume - volumeStep);
+                    } else {
+                        birthdayAudio.pause();
+                        birthdayAudio.currentTime = 0; // Reiniciar
+                        birthdayAudio.volume = 1; // Restaurar volumen
+                        clearInterval(fadeOut);
+                        console.log('Fade-out terminado, iniciando segunda canción'); // Depuración
+                        // Iniciar segunda canción
+                        secondAudio.play().catch(error => {
+                            console.log('No se pudo reproducir la segunda canción:', error);
+                        });
+                        // Habilitar tarjeta
+                        card.style.pointerEvents = 'auto';
+                        console.log('Tarjeta habilitada'); // Depuración
+                    }
+                }, fadeInterval);
+            }, 28000 - (Date.now() - startTime)); // Ajustar al segundo 28 exacto
         }, 500); // Esperar animación (0.5s)
     });
 
@@ -181,10 +171,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Manejar clic en el botón de flecha
     arrowButton.addEventListener('click', function(event) {
         event.stopPropagation(); // Evitar que el clic propague a la tarjeta
-        console.log('Clic en botón de flecha'); // Depuración
+        console.log('Clic en botón de flecha, clases actuales:', card.classList); // Depuración
         card.classList.remove('is-open');
         card.classList.add('is-contraportada');
-        isCardOpen = false;
         isContraportada = true;
         
         // Deshabilitar reapertura de la tarjeta

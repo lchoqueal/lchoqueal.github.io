@@ -114,10 +114,12 @@ body {
 
 .card.is-contraportada .card-back {
     transform: rotateY(-180deg);
+    transition: transform 1s ease;
 }
 
 .card.is-contraportada .card-contraportada {
     transform: rotateY(0deg);
+    transition: transform 1s ease;
 }
 
 .glowing-text {
