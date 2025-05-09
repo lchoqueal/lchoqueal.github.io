@@ -79,11 +79,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Iniciar fuegos artificiales
             launchFireworks();
             
+            //Iniciar audio antes de tiempo
+            audio.currentTime = 2
+
             // Reproducir audio
             audio.play().catch(error => {
                 console.log('No se pudo reproducir el audio:', error);
             });
-            
+
             // Iniciar fundido en el segundo 33 (35000ms - 2000ms)
             setTimeout(() => {
                 const fadeDuration = 2000; // 2 segundos de fundido
