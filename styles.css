@@ -36,7 +36,7 @@ body {
     width: 90%;
     max-width: 350px;
     height: 500px;
-    perspective: 2000px;
+    perspective: 1200px;
     z-index: 10;
     transition: opacity 0.5s ease;
     overflow: hidden; /* Evitar desbordamiento */
@@ -55,7 +55,7 @@ body {
     cursor: pointer;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     border-radius: 5px 15px 15px 5px;
-    transition: transform 1s ease;
+    transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card-face {
@@ -69,6 +69,7 @@ body {
     flex-direction: column;
     padding: 20px;
     text-align: center;
+    transform-origin: left center; /* Rotar desde el lomo */
 }
 
 .card-front {
@@ -78,55 +79,29 @@ body {
     font-weight: bold;
     border-radius: 5px 15px 15px 5px;
     z-index: 2;
-    transform-origin: left center;
     transform: rotateY(0deg);
+    padding-top: 150px;
 }
 
 .card-back {
     background: linear-gradient(135deg, #fff, #f5f5f5);
     border-radius: 15px 5px 5px 15px;
     transform: rotateY(180deg);
-    transform-origin: left center;
     overflow: hidden;
     box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.1);
     z-index: 1;
-    position: relative;
-}
-
-.card-contraportada {
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    color: white;
-    font-size: 1.8rem;
-    font-weight: bold;
-    border-radius: 5px 15px 15px 5px;
-    transform: rotateY(360deg);
-    transform-origin: left center;
-    z-index: 0;
 }
 
 .card.is-open .card-front {
     transform: rotateY(-180deg);
-    transition: transform 1s ease;
+    transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); /* Sombra al abrir */
 }
 
 .card.is-open .card-back {
     transform: rotateY(0deg);
-    transition: transform 1s ease;
-}
-
-.card.is-contraportada .card-front {
-    transform: rotateY(-360deg);
-    transition: transform 1s ease;
-}
-
-.card.is-contraportada .card-back {
-    transform: rotateY(-180deg);
-    transition: transform 1s ease;
-}
-
-.card.is-contraportada .card-contraportada {
-    transform: rotateY(0deg);
-    transition: transform 1s ease;
+    transition: transform 2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3); /* Sombra al abrir */
 }
 
 .glowing-text {
@@ -140,6 +115,58 @@ body {
     to {
         text-shadow: 0 0 10px #fff, 0 0 20px #ff758c, 0 0 30px #ff758c, 0 0 40px #ff758c;
     }
+}
+
+.front-image {
+    width: 100px;
+    margin-top: 2px;
+    transition: opacity 0.5s ease;
+}
+
+.cake-image {
+    width: 180px;
+    margin-top: 2px;
+    transition: opacity 0.5s ease;
+}
+
+.final-image {
+    width: 180px;
+    /*margin-top: -30px; /* Subir más para evitar recorte */
+    transition: opacity 0.5s ease;
+}
+
+.front-image:not(.hidden), .cake-image:not(.hidden), .final-image:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-gift-image {
+    width: 80px; /* Base para gift1.webp */
+    margin: 10px auto;
+    display: block;
+    transition: opacity 0.5s ease;
+}
+
+.modal-gift-image[data-gift="2"] {
+    width: 120px;
+}
+
+.modal-gift-image[data-gift="3"] {
+    width: 94.4px;
+}
+
+.modal-gift-image:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+}
+
+#touchInstruction {
+    display: none; /* Oculto inicialmente */
+    margin-top: 5px;
+}
+
+#touchInstruction.visible {
+    display: block; /* Visible cuando la tarjeta es interactuable */
 }
 
 .intro-overlay {
@@ -226,112 +253,28 @@ body {
     height: 120px;
     position: relative;
     cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-/* Estilo de caja de regalo cerrada */
-.gift-image::before {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: #ff758c; /* Color base de la caja */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-}
-
-.gift-image::after {
-    content: '';
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        to right,
-        transparent 40%,
-        #ffd700 40%, /* Listón dorado */
-        #ffd700 60%,
-        transparent 60%
-    ),
-    linear-gradient(
-        to bottom,
-        transparent 40%,
-        #ffd700 40%,
-        #ffd700 60%,
-        transparent 60%
-    );
-    z-index: 2;
-}
-
-/* Lazo en la parte superior */
-.gift-image .bow {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle at 50% 50%, #ffd700, #d4af37);
-    clip-path: polygon(
-        50% 0%,
-        65% 35%,
-        100% 35%,
-        70% 50%,
-        85% 85%,
-        50% 65%,
-        15% 85%,
-        30% 50%,
-        0% 35%,
-        35% 35%
-    );
-    z-index: 3;
-}
-
-/* Tapa de la caja (cerrada) */
-.gift-image .lid {
-    position: absolute;
-    width: 100%;
-    height: 30px;
-    top: -10px;
-    background-color: #ff758c;
-    border-bottom: 2px solid #d64d6b;
-    z-index: 2;
-    transition: transform 0.5s ease, top 0.5s ease;
+    background-image: url('gift-close.webp');
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.3s ease, transform 0.3s ease;
 }
 
 /* Estado abierto */
-.gift-image.opened::before {
-    background-color: #e0e0e0; /* Caja abierta, color interior */
+.gift .gift-image.opened {
+    background-image: url('gift-open.webp');
 }
 
-.gift-image.opened .lid {
-    top: -40px;
-    transform: rotateX(45deg);
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+/* Filtros para diferenciar regalos */
+.gift-1 .gift-image {
+    filter: hue-rotate(0deg); /* Rojo */
 }
 
-.gift-image.opened::after {
-    /* Ocultar listón en estado abierto */
-    background: none;
+.gift-2 .gift-image {
+    filter: hue-rotate(120deg); /* Verde */
 }
 
-.gift-image.opened .bow {
-    display: none; /* Ocultar lazo */
-}
-
-/* Colores distintos para cada regalo */
-.gift-1 .gift-image::before,
-.gift-1 .gift-image .lid {
-    background-color: #ff758c; /* Rojo */
-}
-
-.gift-2 .gift-image::before,
-.gift-2 .gift-image .lid {
-    background-color: #76d7c4; /* Verde */
-}
-
-.gift-3 .gift-image::before,
-.gift-3 .gift-image .lid {
-    background-color: #5dade2; /* Azul */
+.gift-3 .gift-image {
+    filter: hue-rotate(240deg); /* Azul */
 }
 
 .gift-image:hover:not(.opened) {
@@ -387,11 +330,6 @@ body {
 
 .arrow-button:hover {
     transform: scale(1.1);
-}
-
-.final-message {
-    font-size: 1.8rem;
-    line-height: 1.4;
 }
 
 .modal {
@@ -451,4 +389,9 @@ body {
     background: linear-gradient(to right, #d64d6b, #b53a57);
     z-index: 3;
     border-radius: 5px 0 0 5px;
+    transition: box-shadow 2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card.is-open .card-spine {
+    box-shadow: inset -2px 0 5px rgba(0, 0, 0, 0.4); /* Sombra al abrir */
 }

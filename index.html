@@ -19,12 +19,15 @@
         <div class="card" id="birthdayCard">
             <div class="card-spine"></div>
             <div class="card-face card-front">
-                <p class="glowing-text">Feliz Cumpleaños</p>
-                <p style="font-size: 1rem; margin-top: 20px;">(Toca para abrir)</p>
+                <p class="glowing-text" id="frontMessage">🎉 Feliz Cumpleaños Jacky 🎉</p>
+                <img src="hoja1.webp" class="front-image hidden" alt="Hoja inicial">
+                <img src="cake.gif" class="cake-image hidden" alt="Pastel animado">
+                <p id="touchInstruction" style="font-size: 1rem; margin-top: 20px;">(Toca para abrir)</p>
+                <img src="picture.png" class="final-image hidden" alt="Imagen final" style="margin-top: -185px;">
             </div>
             <div class="card-face card-back">
-                <div class="birthday-message">¡Feliz Cumpleaños!</div>
-                <div class="discover-text">Descubre lo que te traen estos regalos</div>
+                <div class="birthday-message">¡Feliz Cumpleaños Jackeline :D!</div>
+                <div class="discover-text">Ahora toca abrir los regalitos </div>
                 
                 <div class="gift-slider">
                     <div class="gifts-container" id="giftsContainer">
@@ -55,9 +58,6 @@
                     </svg>
                 </button>
             </div>
-            <div class="card-face card-contraportada">
-                <p class="glowing-text final-message">Pásala muy bonito en tu día especial :D</p>
-            </div>
         </div>
     </div>
 
@@ -65,6 +65,7 @@
         <div class="modal-content">
             <span class="close-modal">×</span>
             <div class="modal-title" id="modalTitle">Título del Regalo</div>
+            <img class="modal-gift-image hidden" id="modalGiftImage" alt="Imagen del regalo">
             <div class="modal-message" id="modalMessage">Mensaje del regalo aparecerá aquí.</div>
         </div>
     </div>
