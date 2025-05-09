@@ -39,6 +39,7 @@ body {
     perspective: 2000px;
     z-index: 10;
     transition: opacity 0.5s ease;
+    overflow: hidden; /* Evitar desbordamiento */
 }
 
 .card-container:not(.hidden) {
@@ -263,7 +264,7 @@ body {
 .arrow-button {
     position: absolute;
     bottom: 20px;
-    left: 20px;
+    right: 20px; /* Cambiado de left a right */
     background-color: #ff758c;
     border: none;
     border-radius: 50%;

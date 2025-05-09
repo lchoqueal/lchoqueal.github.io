@@ -29,11 +29,16 @@ document.addEventListener('DOMContentLoaded', function() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Fuegos artificiales
-    function launchFireworks() {
-        const duration = 5 * 1000; // 5 segundos
+    // Fuegos artificiales más realistas
+    function launchFireworks(duration) {
         const animationEnd = Date.now() + duration;
-        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        const defaults = {
+            startVelocity: 30,
+            spread: 120,
+            ticks: 60,
+            zIndex: 0,
+            colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff']
+        };
 
         function randomInRange(min, max) {
             return Math.random() * (max - min) + min;
@@ -46,16 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 return clearInterval(interval);
             }
 
-            const particleCount = 50 * (timeLeft / duration);
+            const particleCount = randomInRange(30, 60);
+            // Lanzar desde diferentes posiciones
             confetti(Object.assign({}, defaults, {
                 particleCount,
-                origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                origin: { x: randomInRange(0.1, 0.3), y: randomInRange(0.6, 0.8) },
+                startVelocity: randomInRange(20, 40),
+                spread: randomInRange(90, 150),
+                scalar: randomInRange(0.5, 1.5)
             }));
             confetti(Object.assign({}, defaults, {
                 particleCount,
-                origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                origin: { x: randomInRange(0.7, 0.9), y: randomInRange(0.6, 0.8) },
+                startVelocity: randomInRange(20, 40),
+                spread: randomInRange(90, 150),
+                scalar: randomInRange(0.5, 1.5)
             }));
-        }, 250);
+        }, 200); // Lanzar cada 200ms para más dinamismo
     }
 
     // Confeti al abrir la tarjeta
@@ -80,22 +92,30 @@ document.addEventListener('DOMContentLoaded', function() {
             cardContainer.classList.remove('hidden');
             canvas.classList.remove('hidden');
             
-            // Iniciar fuegos artificiales
-            launchFireworks();
+            // Deshabilitar interacción con la tarjeta inicialmente
+            card.style.pointerEvents = 'none';
             
             // Reproducir primera canción después de 3 segundos
             setTimeout(() => {
                 birthdayAudio.play().catch(error => {
                     console.log('No se pudo reproducir la primera canción:', error);
                 });
+                
+                // Iniciar fuegos artificiales por la duración de la canción
+                // Nota: audio.duration puede no estar disponible inmediatamente
+                birthdayAudio.addEventListener('loadedmetadata', function() {
+                    const duration = birthdayAudio.duration * 1000; // Convertir a milisegundos
+                    launchFireworks(duration);
+                }, { once: true });
+                
+                // Habilitar tarjeta y reproducir segunda canción al terminar la primera
+                birthdayAudio.addEventListener('ended', function() {
+                    card.style.pointerEvents = 'auto';
+                    secondAudio.play().catch(error => {
+                        console.log('No se pudo reproducir la segunda canción:', error);
+                    });
+                }, { once: true });
             }, 3000);
-            
-            // Reproducir segunda canción cuando termine la primera
-            birthdayAudio.addEventListener('ended', function() {
-                secondAudio.play().catch(error => {
-                    console.log('No se pudo reproducir la segunda canción:', error);
-                });
-            });
         }, 500); // Esperar a que termine la animación (0.5s)
     });
 
@@ -144,6 +164,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Manejar clic en el botón de flecha
     arrowButton.addEventListener('click', function(event) {
         event.stopPropagation(); // Evitar que el clic propague a la tarjeta
+        console.log('Clic en botón de flecha'); // Depuración
         card.classList.remove('is-open');
         card.classList.add('is-contraportada');
         isCardOpen = false;
