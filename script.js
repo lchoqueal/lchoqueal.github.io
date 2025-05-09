@@ -11,13 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const canvas = document.getElementById('fireworksCanvas');
     const introOverlay = document.getElementById('introOverlay');
     const cardContainer = document.getElementById('cardContainer');
-    const cardFront = document.getElementById('cardFront');
-    const nextButton = document.getElementById('nextButton');
+    const arrowButton = document.getElementById('arrowButton');
     const ctx = canvas.getContext('2d');
     
     let currentSlide = 0;
     const totalSlides = document.querySelectorAll('.gift').length;
     let isCardOpen = false;
+    let isContraportada = false;
     const openedGifts = new Set(); // Rastrear regalos abiertos
 
     // Ajustar el tamaño del canvas
@@ -107,37 +107,58 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 500); // Esperar a que termine la animación (0.5s)
     });
 
-    // Abrir/cerrar tarjeta, evitando clics en elementos interactivos
+    // Abrir/cerrar tarjeta
     card.addEventListener('click', function(event) {
-        // Evitar togglear si el clic ocurre en regalos, puntos, o botón
-        if (
-            event.target.closest('.gift-image') ||
-            event.target.closest('.slider-dot') ||
-            event.target.closest('.next-button')
-        ) {
-            return;
-        }
+        // Evitar clics si está en contraportada
+        if (isContraportada) return;
         
-        card.classList.toggle('is-open');
-        isCardOpen = !isCardOpen;
-        if (isCardOpen) {
-            launchConfetti();
+        // Toggle is-open solo si el clic no es en un elemento interactivo
+        if (!event.target.closest('.gift-image, .slider-dot, .arrow-button')) {
+            card.classList.toggle('is-open');
+            isCardOpen = !isCardOpen;
+            if (isCardOpen) {
+                launchConfetti();
+            }
         }
     });
 
+    // Configurar eventos para los regalos
+    giftImages.forEach(gift => {
+        gift.addEventListener('click', function(event) {
+            event.stopPropagation(); // Evitar que el clic propague a la tarjeta
+            const giftNumber = this.getAttribute('data-gift');
+            showGiftMessage(giftNumber);
+            
+            // Agregar regalo al conjunto de abiertos
+            openedGifts.add(giftNumber);
+            
+            // Mostrar botón si se han abierto los tres regalos
+            if (openedGifts.size === 3) {
+                arrowButton.classList.remove('hidden');
+            }
+        });
+    });
+
+    // Configurar eventos para los puntos de navegación
+    dots.forEach(dot => {
+        dot.addEventListener('click', function(event) {
+            event.stopPropagation(); // Evitar que el clic propague a la tarjeta
+            const slideIndex = parseInt(this.getAttribute('data-slide'));
+            goToSlide(slideIndex);
+        });
+    });
+
     // Manejar clic en el botón de flecha
-    nextButton.addEventListener('click', function() {
+    arrowButton.addEventListener('click', function(event) {
+        event.stopPropagation(); // Evitar que el clic propague a la tarjeta
         card.classList.remove('is-open');
+        card.classList.add('is-contraportada');
         isCardOpen = false;
+        isContraportada = true;
         
-        // Actualizar contenido de la parte frontal
-        cardFront.innerHTML = `
-            <p class="glowing-text final-message">Pásala muy bonito en tu día especial :D</p>
-        `;
-        
-        // Deshabilitar reapertura (opcional)
+        // Deshabilitar reapertura de la tarjeta
         card.style.cursor = 'default';
-        card.removeEventListener('click', arguments.callee);
+        card.removeEventListener('click', card.onclick);
     });
 
     // Deslizador de regalos
@@ -152,30 +173,6 @@ document.addEventListener('DOMContentLoaded', function() {
             dot.classList.toggle('active', i === currentSlide);
         });
     }
-    
-    // Configurar eventos para los puntos de navegación
-    dots.forEach(dot => {
-        dot.addEventListener('click', function() {
-            const slideIndex = parseInt(this.getAttribute('data-slide'));
-            goToSlide(slideIndex);
-        });
-    });
-    
-    // Configurar eventos para los regalos
-    giftImages.forEach(gift => {
-        gift.addEventListener('click', function() {
-            const giftNumber = this.getAttribute('data-gift');
-            showGiftMessage(giftNumber);
-            
-            // Agregar regalo al conjunto de abiertos
-            openedGifts.add(giftNumber);
-            
-            // Mostrar botón si se han abierto los tres regalos
-            if (openedGifts.size === 3) {
-                nextButton.classList.remove('hidden');
-            }
-        });
-    });
     
     // Mostrar mensaje del regalo
     function showGiftMessage(giftNumber) {

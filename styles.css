@@ -54,6 +54,7 @@ body {
     cursor: pointer;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     border-radius: 5px 15px 15px 5px;
+    transition: transform 1s ease;
 }
 
 .card-face {
@@ -77,22 +78,43 @@ body {
     border-radius: 5px 15px 15px 5px;
     z-index: 2;
     transform-origin: left center;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 1s ease;
+    transform: rotateY(0deg);
+}
+
+.card-back {
+    background: linear-gradient(135deg, #fff, #f5f5f5);
+    border-radius: 15px 5px 5px 15px;
+    transform: rotateY(180deg);
+    overflow: hidden;
+    box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    position: relative;
+}
+
+.card-contraportada {
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    color: white;
+    font-size: 1.8rem;
+    font-weight: bold;
+    border-radius: 5px 15px 15px 5px;
+    transform: rotateY(360deg);
+    z-index: 0;
 }
 
 .card.is-open .card-front {
     transform: rotateY(-180deg);
 }
 
-.card-back {
-    background: linear-gradient(135deg, #fff, #f5f5f5);
-    border-radius: 15px 5px 5px 15px;
-    transform: none;
-    overflow: hidden;
-    box-shadow: inset 5px 0 15px rgba(0, 0, 0, 0.1);
-    z-index: 1;
-    position: relative;
+.card.is-open .card-back {
+    transform: rotateY(0deg);
+}
+
+.card.is-contraportada .card-back {
+    transform: rotateY(-180deg);
+}
+
+.card.is-contraportada .card-contraportada {
+    transform: rotateY(0deg);
 }
 
 .glowing-text {
@@ -241,7 +263,7 @@ body {
     background-color: #ff758c;
 }
 
-.next-button {
+.arrow-button {
     position: absolute;
     bottom: 20px;
     left: 20px;
@@ -255,16 +277,21 @@ body {
     align-items: center;
     cursor: pointer;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.next-button:not(.hidden) {
+.arrow-button:not(.hidden) {
     opacity: 1;
     visibility: visible;
 }
 
-.next-button:hover {
+.arrow-button:hover {
     transform: scale(1.1);
+}
+
+.final-message {
+    font-size: 1.8rem;
+    line-height: 1.4;
 }
 
 .modal {
@@ -324,4 +351,4 @@ body {
     background: linear-gradient(to right, #d64d6b, #b53a57);
     z-index: 3;
     border-radius: 5px 0 0 5px;
-}   
+}
