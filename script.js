@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalTitle = document.getElementById('modalTitle');
     const modalMessage = document.getElementById('modalMessage');
     const closeModal = document.querySelector('.close-modal');
-    const audio = document.getElementById('birthdayAudio');
+    const birthdayAudio = document.getElementById('birthdayAudio');
+    const secondAudio = document.getElementById('secondAudio');
     const canvas = document.getElementById('fireworksCanvas');
     const introOverlay = document.getElementById('introOverlay');
     const cardContainer = document.getElementById('cardContainer');
@@ -82,28 +83,19 @@ document.addEventListener('DOMContentLoaded', function() {
             // Iniciar fuegos artificiales
             launchFireworks();
             
-            // Reproducir audio
-            audio.play().catch(error => {
-                console.log('No se pudo reproducir el audio:', error);
-            });
-            
-            // Iniciar fundido en el segundo 33 (35000ms - 2000ms)
+            // Reproducir primera canción después de 3 segundos
             setTimeout(() => {
-                const fadeDuration = 2000; // 2 segundos de fundido
-                const fadeInterval = 50; // Actualizar cada 50ms
-                const volumeStep = audio.volume / (fadeDuration / fadeInterval);
-
-                const fadeOut = setInterval(() => {
-                    if (audio.volume > 0) {
-                        audio.volume = Math.max(0, audio.volume - volumeStep);
-                    } else {
-                        audio.pause();
-                        audio.currentTime = 0; // Reinicia el audio
-                        audio.volume = 1; // Restaura el volumen
-                        clearInterval(fadeOut);
-                    }
-                }, fadeInterval);
-            }, 33000); // Inicia el fundido en el segundo 33
+                birthdayAudio.play().catch(error => {
+                    console.log('No se pudo reproducir la primera canción:', error);
+                });
+            }, 3000);
+            
+            // Reproducir segunda canción cuando termine la primera
+            birthdayAudio.addEventListener('ended', function() {
+                secondAudio.play().catch(error => {
+                    console.log('No se pudo reproducir la segunda canción:', error);
+                });
+            });
         }, 500); // Esperar a que termine la animación (0.5s)
     });
 
@@ -126,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
     giftImages.forEach(gift => {
         gift.addEventListener('click', function(event) {
             event.stopPropagation(); // Evitar que el clic propague a la tarjeta
+            console.log('Clic en regalo:', this.getAttribute('data-gift')); // Depuración
             const giftNumber = this.getAttribute('data-gift');
             showGiftMessage(giftNumber);
             
@@ -198,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         modalTitle.textContent = title;
         modalMessage.textContent = message;
-        modal.style.fontWeight = 'bold';
         modal.style.display = 'flex';
     }
     
