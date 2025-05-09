@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Cumpleaños</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <canvas id="fireworksCanvas" class="fireworks-canvas"></canvas>
+    
+    <div class="card-container">
+        <div class="card" id="birthdayCard">
+            <div class="card-spine"></div>
+            <div class="card-face card-front">
+                <p class="glowing-text">Feliz Cumpleaños</p>
+                <p style="font-size: 1rem; margin-top: 20px;">(Toca para abrir)</p>
+            </div>
+            <div class="card-face card-back">
+                <div class="birthday-message">¡Feliz Cumpleaños!</div>
+                <div class="discover-text">Descubre lo que te traen estos regalos</div>
+                
+                <div class="gift-slider">
+                    <div class="gifts-container" id="giftsContainer">
+                        <div class="gift gift-1">
+                            <div class="gift-image" data-gift="1"></div>
+                            <div class="gift-name">Regalo 1</div>
+                        </div>
+                        <div class="gift gift-2">
+                            <div class="gift-image" data-gift="2"></div>
+                            <div class="gift-name">Regalo 2</div>
+                        </div>
+                        <div class="gift gift-3">
+                            <div class="gift-image" data-gift="3"></div>
+                            <div class="gift-name">Regalo 3</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="slider-controls">
+                    <div class="slider-dot active" data-slide="0"></div>
+                    <div class="slider-dot" data-slide="1"></div>
+                    <div class="slider-dot" data-slide="2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="giftModal">
+        <div class="modal-content">
+            <span class="close-modal">×</span>
+            <div class="modal-title" id="modalTitle">Título del Regalo</div>
+            <div class="modal-message" id="modalMessage">Mensaje del regalo aparecerá aquí.</div>
+        </div>
+    </div>
+
+    <audio id="birthdayAudio" src="birthday-sound.mp3" preload="auto"></audio>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
