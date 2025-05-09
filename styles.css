@@ -106,10 +106,17 @@ body {
 
 .card.is-open .card-front {
     transform: rotateY(-180deg);
+    transition: transform 1s ease;
 }
 
 .card.is-open .card-back {
     transform: rotateY(0deg);
+    transition: transform 1s ease;
+}
+
+.card.is-contraportada .card-front {
+    transform: rotateY(-360deg);
+    transition: transform 1s ease;
 }
 
 .card.is-contraportada .card-back {
@@ -217,33 +224,124 @@ body {
 .gift-image {
     width: 120px;
     height: 120px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    margin-bottom: 15px;
+    position: relative;
     cursor: pointer;
-    transition: transform 0.3s;
+    transition: transform 0.3s ease;
 }
 
-.gift-image:hover {
+/* Estilo de caja de regalo cerrada */
+.gift-image::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: #ff758c; /* Color base de la caja */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.gift-image::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        transparent 40%,
+        #ffd700 40%, /* Listón dorado */
+        #ffd700 60%,
+        transparent 60%
+    ),
+    linear-gradient(
+        to bottom,
+        transparent 40%,
+        #ffd700 40%,
+        #ffd700 60%,
+        transparent 60%
+    );
+    z-index: 2;
+}
+
+/* Lazo en la parte superior */
+.gift-image .bow {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle at 50% 50%, #ffd700, #d4af37);
+    clip-path: polygon(
+        50% 0%,
+        65% 35%,
+        100% 35%,
+        70% 50%,
+        85% 85%,
+        50% 65%,
+        15% 85%,
+        30% 50%,
+        0% 35%,
+        35% 35%
+    );
+    z-index: 3;
+}
+
+/* Tapa de la caja (cerrada) */
+.gift-image .lid {
+    position: absolute;
+    width: 100%;
+    height: 30px;
+    top: -10px;
+    background-color: #ff758c;
+    border-bottom: 2px solid #d64d6b;
+    z-index: 2;
+    transition: transform 0.5s ease, top 0.5s ease;
+}
+
+/* Estado abierto */
+.gift-image.opened::before {
+    background-color: #e0e0e0; /* Caja abierta, color interior */
+}
+
+.gift-image.opened .lid {
+    top: -40px;
+    transform: rotateX(45deg);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+}
+
+.gift-image.opened::after {
+    /* Ocultar listón en estado abierto */
+    background: none;
+}
+
+.gift-image.opened .bow {
+    display: none; /* Ocultar lazo */
+}
+
+/* Colores distintos para cada regalo */
+.gift-1 .gift-image::before,
+.gift-1 .gift-image .lid {
+    background-color: #ff758c; /* Rojo */
+}
+
+.gift-2 .gift-image::before,
+.gift-2 .gift-image .lid {
+    background-color: #76d7c4; /* Verde */
+}
+
+.gift-3 .gift-image::before,
+.gift-3 .gift-image .lid {
+    background-color: #5dade2; /* Azul */
+}
+
+.gift-image:hover:not(.opened) {
     transform: scale(1.1);
 }
 
 .gift-name {
     font-size: 1.2rem;
     color: #333;
-}
-
-.gift-1 .gift-image {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff758c"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>');
-}
-
-.gift-2 .gift-image {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2376d7c4"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>');
-}
-
-.gift-3 .gift-image {
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23f39c12"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7zm1-11h-2v3H8v2h3v3h2v-3h3v-2h-3V8z"/></svg>');
+    margin-top: 10px;
 }
 
 .slider-controls {

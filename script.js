@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // Fuegos artificiales (versión original, ajustada a 30 segundos)
+    // Fuegos artificiales (versión original, 30 segundos)
     function launchFireworks() {
         console.log('Iniciando fuegos artificiales'); // Depuración
         const duration = 30 * 1000; // 30 segundos
@@ -143,18 +143,31 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Configurar eventos para los regalos
     giftImages.forEach(gift => {
+        // Agregar elementos dinámicos para la tapa y el lazo
+        const lid = document.createElement('div');
+        lid.classList.add('lid');
+        const bow = document.createElement('div');
+        bow.classList.add('bow');
+        gift.appendChild(lid);
+        gift.appendChild(bow);
+
         gift.addEventListener('click', function(event) {
             event.stopPropagation(); // Evitar que el clic propague a la tarjeta
             console.log('Clic en regalo:', this.getAttribute('data-gift')); // Depuración
             const giftNumber = this.getAttribute('data-gift');
-            showGiftMessage(giftNumber);
             
-            // Agregar regalo al conjunto de abiertos
-            openedGifts.add(giftNumber);
-            
-            // Mostrar botón si se han abierto los tres regalos
-            if (openedGifts.size === 3) {
-                arrowButton.classList.remove('hidden');
+            // Marcar como abierto (visualmente)
+            if (!this.classList.contains('opened')) {
+                this.classList.add('opened');
+                showGiftMessage(giftNumber);
+                
+                // Agregar regalo al conjunto de abiertos
+                openedGifts.add(giftNumber);
+                
+                // Mostrar botón si se han abierto los tres regalos
+                if (openedGifts.size === 3) {
+                    arrowButton.classList.remove('hidden');
+                }
             }
         });
     });
@@ -172,13 +185,17 @@ document.addEventListener('DOMContentLoaded', function() {
     arrowButton.addEventListener('click', function(event) {
         event.stopPropagation(); // Evitar que el clic propague a la tarjeta
         console.log('Clic en botón de flecha, clases actuales:', card.classList); // Depuración
+        // Limpiar clases previas
         card.classList.remove('is-open');
-        card.classList.add('is-contraportada');
-        isContraportada = true;
-        
-        // Deshabilitar reapertura de la tarjeta
-        card.style.cursor = 'default';
-        card.removeEventListener('click', card.onclick);
+        // Forzar transición a contraportada
+        setTimeout(() => {
+            card.classList.add('is-contraportada');
+            console.log('Clases después de 100ms:', card.classList); // Depuración
+            isContraportada = true;
+            // Deshabilitar interacción
+            card.style.cursor = 'default';
+            card.style.pointerEvents = 'none';
+        }, 100); // Retraso para asegurar renderización
     });
 
     // Deslizador de regalos
